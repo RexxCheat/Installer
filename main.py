@@ -1,5 +1,6 @@
 import os
 import subprocess
+import sys
 
 # ANSI color codes
 RED = '\033[91m'
@@ -20,7 +21,14 @@ def run_command(command):
         print(stdout.decode())
 
 def print_banner():
-    print(CYAN + "******************************************" + RESET)
+    print(CYAN + r"""
+  __      _______  _    _  _____ _____ _______ _______ ____  _   _ 
+  \ \    / /_   _| | |  | |/ ____|  __ \__   __|__   __/ __ \| \ | |
+   \ \  / /  | |   | |  | | |    | |__) | | |     | | | |  | |  \| |
+    \ \/ /   | |   | |  | | |    |  _  /  | |     | | | |  | | . ` |
+     \  /   _| |_  | |__| | |____| | \ \  | |     | | | |__| | |\  |
+      \/   |_____|  \____/ \_____|_|  \_\ |_|     |_|  \____/|_| \_|
+    """ + RESET)
     print(MAGENTA + "Author: Likhon Sheikh" + RESET)
     print(GREEN + "TapSwap Bot Installer" + RESET)
     print(YELLOW + "Follow for more cool stuff:" + RESET)
@@ -35,12 +43,18 @@ run_command('termux-setup-storage')
 run_command('pkg update && pkg upgrade -y')
 run_command('pkg install git python -y')
 
+# Ensure pip is updated
+run_command('python -m pip install --upgrade pip')
+
 # Clone the GitHub repository
 os.chdir('/storage/emulated/0')
 run_command('git clone https://github.com/RexxCheat/TapSwap-Auto-Clicker.git')
 
 # Navigate into the cloned directory
 os.chdir('TapSwap-Auto-Clicker')
+
+# Install required Python packages
+run_command('pip install telethon requests aiocron urllib3')
 
 # Ask for user inputs
 api_id = input(GREEN + "Enter your API ID: " + RESET)
@@ -66,8 +80,9 @@ config_content = f'''
 with open('config.py', 'w') as config_file:
     config_file.write(config_content)
 
-# Install Python packages
-run_command('pip install -r requirements.txt')
+# Install dependencies from requirements.txt (if exists)
+if os.path.exists('requirements.txt'):
+    run_command('pip install -r requirements.txt')
 
 # Run the main script
 run_command('python clicker.py')
